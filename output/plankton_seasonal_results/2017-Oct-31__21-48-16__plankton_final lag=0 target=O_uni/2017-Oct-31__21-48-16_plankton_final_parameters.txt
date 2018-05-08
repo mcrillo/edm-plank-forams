@@ -1,0 +1,12 @@
+Date and Time: 2017-10-31 21:55:54
+File: plankton_final.csv
+TargetColumn: O_uni
+DateColumn: time
+num_surr: 500
+T_period: 52
+seed: 12345
+significance: 0.05
+MaxE: 10
+XFilter: 0
+image.width: 40
+image.height: 20
