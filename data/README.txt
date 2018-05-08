@@ -16,7 +16,7 @@ doy: Day Of the Year of the middle date (i.e., 2/2/2018 = 33)
 cum_days: cumulative days of the whole sampling period
 resolution: number of days in between open and close
 next_open: number of days in between two samplings events (i.e., two rows) = in between the last close and the next open)
-set: Sea Surface Temperature data - mean sst for the days in between open and close. Data from http://monitor.cicsnc.org/obs4MIPs/data/OISST/Daily/
+sst: Sea Surface Temperature data - mean sst for the days in between open and close. Data from http://monitor.cicsnc.org/obs4MIPs/data/OISST/Daily/
 
 GOM_NAs.csv
 GOM_original_sst.csv spreadsheet, but now all time-steps are equivalent to 7 days (added column: time-step). 
