@@ -50,6 +50,10 @@ get_gom_sst <- function(overwrite){ # data.frame, string
       order <- c(1,2,((ncol(data)-5):ncol(data)), col_ssp)
       data <- data[,order]
       
+      # Removing species that were collected only for 2 years (i.e., too many NAs)
+      ssp_remove <- which(names(data) =="G_tumida"):ncol(data)
+      data <- data[,- ssp_remove]
+      
       # Save new data
       write.csv(data, "data/GOM/GOM_original_sst.csv", row.names = FALSE)
       
