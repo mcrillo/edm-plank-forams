@@ -67,6 +67,23 @@ Finally, we wanted to see the overall species abundances patterns for all 35 sed
 
 
 %----------------------------------------------------------------------------------------
+\subsection{Null model (surrogates)}
+The positive correlation among species might be an effect of seasonality. 
+% another way to solve: function decompose in R,decompor a série temporal como uma soma de (trend + seasonality + noise) e subtrair a componente sazonal antes de fazer a análise. Porem, to do this, precisa botar a série no formato "time-series" do R. pra isso eh so usar a função "ts()", mas vc vai precisar saber o periodo (freq) da série.Pra achar o período, se não for nada óbvio (tipo anual) dá pra tentar chutar olhando as funções de autocorrelação e autocorrelação parcial (adf() e pacf() no R)
+% "partial correlation": "the correlation between the residuals RX (X=ssp1) and RY (Y=ssp2) resulting from the linear regression with Z (Z = temperatura)"
+
+For each time-series (\textit{i.e.}, each species in each sediment trap) we calculated a smoothing spline of the shell fluxes based on yearly observations. To do this, the observations were put on the same time-scale by converting the first date of the collection intervals to the day of the year. Then, a spline function was applied to the data.
+We do not need to impose a priori the seasonality of the data with this methodology,and it allows for any number of shell flux peaks throughout the year.
+
+The correlation between the time-series raw data and the spline series is an indicator of how seasonal the variable is. SST, for example, shows always a high correlation ($\rho$ ~ 0.9). We assume that if a species' shell flux responds to SST(or any other variable that relates to SST), its time-series will also be seasonal and show a high correlation with its splines. 
+
+We generated a null model based on the splines of each time-series. For each time-step, we calculated the residual between the time-series data and the spline data, resulting in a vector of residuals with the same length as the time-series and the spline series. We then randomized the residuals 500 times (\textit{i.e.}, 500 different vectors) and added it to the base spline series. This resulted in 500 null series. We calculated the correlation between species pairs for this 500 null series, and the resulting correlation distribution was used as the null model which takes seasonality into account. 
+
+If species correlate positively just because they have synchronous seasonality, then their splines should correlate positively as well. 
+
+
+
+%----------------------------------------------------------------------------------------
 \subsection{Empirical dynamic modelling and convergent cross mapping of the Gulf of Mexico sediment trap}
 
 \subsubsection{Gulf of Mexico sediment trap}
@@ -76,7 +93,7 @@ The Gulf of Mexico (GoM, 27.5N -90.3E (= 269.7), \textcolor{red}{REF}) sediment 
 I used the dataset NOAA 1/4o daily Optimum Interpolation Sea Surface Temperature (or daily OISST, AVHRR-Only) \citep{smith2016oisst}.  % http://monitor.cicsnc.org/obs4MIPs/    https://www.ncdc.noaa.gov/oisst/data-access 
 We used the temperature data point of coordinates (lon 269.625  lat 27.625) 15,76 km away from the sediment trap. 
 
-I calculated the mean of the daily temperature for each sampling interval. The NOAA dataset has the temperature values in Kelvin, the Celcius column was created subtracting 273.15 from the Kelvin values. 
+I calculated the mean of the daily temperature for each sampling interval. The NOAA dataset has the temperature values in Kelvin, the Celsius column was created subtracting 273.15 from the Kelvin values. 
 % Uma coisa a se pensar é que nossos dados da serie temporal são conchas de foraminiferos que morreram recentemente. Então, o indivíduo que morreu no dia X (ou antes do dia X, e só caiu na armadilha no dia X), não vivenciou a temperatura do dia X e sim dos dias anteriores. Como o tempo de vida médio de um indivíduo é um mês (obs.: isso não é completamente claro na literatura/campo), talvez seja melhor eu colocar os dados de temperatura de X-15 dias ou ate X - 30 dias. Eu poderia ja adicionar uma coluna extra tipo "temp_oC-15days". O que vocês acham?
 
 

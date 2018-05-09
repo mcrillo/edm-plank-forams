@@ -69,12 +69,23 @@ seasonal_splines <- function(DataSeries,DateFormat, SavePlots){
   colnames(Seasonal)<-VariablesNames
   # write csv output file
   
-  write.csv(Seasonal,paste("output/",trap_name,"seasonal_splines_GOM.csv",sep=''),row.names = F)
+  write.csv(Seasonal,paste("output/",trap_name,"/splines_GOM.csv",sep=''),row.names = F)
   
   splines <- as.data.frame(Seasonal, stringsAsFactors = FALSE)
   splines[,2:ncol(splines)]<- sapply(splines[,2:ncol(splines)], as.numeric)
   splines$open <- ymd(splines$open) # transforming to date format
   # data.frame(names(gom_columns), names(splines))
+  
+  
+  # Seasonality test: correlation between a time-series and its spline
+  seasonality_species <- data.frame(species = rep(NA,ncol(splines)), corr_spline = rep(NA,ncol(splines)))
+  for (i in 2:ncol(splines)){
+    seasonality_species[i,"species"] <- names(splines)[i]
+    seasonality_species[i,"corr_spline"] <- cor(splines[,i], data[,i])
+  }
+  seasonality_species <- seasonality_species[-1,]
+  write.csv(seasonality_species, paste("output/",trap_name,"/seasonality_GOM.csv",sep=''),row.names = F)
+  
   
   return(splines)
 }
