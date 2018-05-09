@@ -11,19 +11,24 @@ plot_correlation_surrogates <- function(corr_surrog, trap_name){
     # Generating vector with variables names that are being compared with the focus variable i
     corr_subset$group <- c(corr_subset$var2[which(corr_subset$var2 != i)],corr_subset$var1[which(corr_subset$var1 != i)])
     # corr_subset[,c("var1","var2", "group")]
+
     
-    subset_melt <- melt(corr_subset[, 8:ncol(corr_subset)], id = "group")
+    # Plot
+    subset_melt <- melt(corr_subset[, which(names(corr_subset)=="V1"):ncol(corr_subset)], id = "group")
     
     p <- ggplot() + 
          geom_boxplot(data = subset_melt, aes(factor(group), value)) +
          labs(y = "Correlation", x = element_blank()) +
-         theme_bw() + ylim(-1, 1) +
+         theme_bw() + ylim(-1, 1.1) +
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_series), color = 'red',size = 2) +
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_splines), color = 'blue',shape = 115,size = 2) +
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_resid), color = 'blue',shape = 114,size = 2) +
          theme(axis.title=element_text(size=18, face="bold"))
 
-   
+    if(any(corr_subset$p_series=="signif")){
+      p <- p + geom_point(data = corr_subset[which(corr_subset$p_series=="signif"),], aes(x = factor(group), y = 1.05), color = 'red',shape = 8, size = 3)
+    }
+
     pdf(file =  paste("output/",trap_name,"/correlation_surrogates/",i,"_GOM.pdf",sep=""), width=length(corr_subset$group), height=5, paper = "special")
       print(p)
     dev.off()  

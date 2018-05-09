@@ -35,14 +35,22 @@ surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){
       season_var2 <-  cor(data[,col_var2], splines[,col_var2])
       
       # correlations
-      corr_series <- cor(data[,col_var1], data[,col_var2]) # red line in the hist
-      corr_splines <- cor(splines[,col_var1], splines[,col_var2])  # black line in the hist
-      corr_resid <- cor( (data[,col_var1]-splines[,col_var1]), (data[,col_var2]-splines[,col_var2]) )  # blue line in the hist
+      corr_series <- cor(data[,col_var1], data[,col_var2])
+      corr_splines <- cor(splines[,col_var1], splines[,col_var2]) 
+      corr_resid <- cor( (data[,col_var1]-splines[,col_var1]), (data[,col_var2]-splines[,col_var2]) ) 
       
       # correlations surrogates (null model)
       corr_surr <- mapply(cor, as.data.frame(surrogates[[(comb_two[1,i])]]), as.data.frame(surrogates[[(comb_two[2,i])]]))
       # correlates each column of the matrices for each species (500 columns each, null series)
       # corr_surr is a vector with 500 correlations = column by column correlation of the two matrices
+      
+      # significance
+      probs <- quantile(corr_surr, probs = c(0.025, 0.975)) 
+      if(corr_series < probs[1] | corr_series > probs[2]) {
+        p_series <- c("signif")
+      }else{
+        p_series <- c("non")
+      }
       
       # binding all variables pairs in one big data.frame
       corr_pairs <- rbind.data.frame(corr_pairs, cbind.data.frame(
@@ -51,8 +59,11 @@ surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){
         season_var1 = round(season_var1,5),
         season_var2 = round(season_var2,5),
         corr_series = round(corr_series,5), 
+        p_series = p_series , 
         corr_splines = round(corr_splines,5),
+        # p_splines = NA,
         corr_resid = round(corr_resid,5), 
+        # p_resid = NA,
         round(t(corr_surr),5))) 
     }
     

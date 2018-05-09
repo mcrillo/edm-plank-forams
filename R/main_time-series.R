@@ -61,7 +61,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   
   # Surrogates: randomization of residuals, summed with splines to generate null series (nreps = 500, i.e., 500 null series)
   corr_surrog <- surrogates_splines(data, splines, trap_name, nreps=500, overwrite=T)     
-  # corr_surrog[1:50,1:10]
+  # corr_surrog[1:50,1:15]
   
   # Plotting correlations with surrogate distribution (box-plots)
   plot_correlation_surrogates(corr_surrog, trap_name)
