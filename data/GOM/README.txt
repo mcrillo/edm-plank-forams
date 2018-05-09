@@ -2,7 +2,7 @@
 Excel files explanation:
 
 
-GOM_original.xlsx
+GOM_original.xlsx & GOM_original.csv
 Original data, sent to me by Lukas Jonkers on the 18.12.2017 
 
 
