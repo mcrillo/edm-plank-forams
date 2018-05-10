@@ -11,6 +11,7 @@ library(GGally)    # ggpairs function
 library(tseries)   # tests series stationary
 library(ggplot2)   # plots
 library(reshape)   # function melt
+library(corrplot)  # matrix correlation plot
 
 # Auxiliary functions
 sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
@@ -57,15 +58,18 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   lags_correlation <- cross_correlation(data, trap_name, overwrite = F)
   
   # Splines and species seasonality
-  splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots=T)
+  splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots = T, overwrite = F)
   
-  # Surrogates: randomization of residuals, summed with splines to generate null series (nreps = 500, i.e., 500 null series)
-  corr_surrog <- surrogates_splines(data, splines, trap_name, nreps=500, overwrite=T)     
+  
+  # Correlation and Surrogates
+  corr_method <- c("kendall")
+  corr_surrog <- surrogates_splines(data, splines, trap_name, nreps=500, corr_method, overwrite = T)   
+  # Surrogates: randomization of residuals, summed with splines to generate null series (nreps = 500 null series, columns V1 - V500)
   # corr_surrog[1:50,1:15]
   
-  # Plotting correlations with surrogate distribution (box-plots)
-  plot_correlation_surrogates(corr_surrog, trap_name)
+  # Plotting box-plots: correlations with surrogate distribution for each focal variable
+  plot_correlation_surrogates(corr_surrog, trap_name, overwrite=T)
+   
   
-
-
- 
+  
+  

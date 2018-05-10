@@ -1,5 +1,5 @@
 
-seasonal_splines <- function(DataSeries,DateFormat, SavePlots){
+seasonal_splines <- function(DataSeries,DateFormat, SavePlots, overwrite){
   #---
   # Author: Brenno Cabella (SeasonalSplines.R modified by Marina Rillo)
   # This code extracts the sazonality from time series using splines.
@@ -10,7 +10,8 @@ seasonal_splines <- function(DataSeries,DateFormat, SavePlots){
   #           csv file with the seasonality for all variables in DataFile   
   #---
   
-   
+if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/splines_GOM.csv",sep=''))){
+    
   # read data
   DateCol=1 # "open" column
   # names variables
@@ -88,6 +89,13 @@ seasonal_splines <- function(DataSeries,DateFormat, SavePlots){
   
   
   return(splines)
+  
+}else{
+  
+  splines <- read.csv(paste("output/",trap_name,"/splines_GOM.csv",sep=''), header = TRUE)
+  return (splines)
+}
+  
 }
 
 

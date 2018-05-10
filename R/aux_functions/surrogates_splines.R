@@ -1,6 +1,6 @@
 
 
-surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){     
+surrogates_splines <- function(data, splines, trap_name, nreps, corr_method, overwrite){     
 
   
   if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""))){
@@ -35,21 +35,23 @@ surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){
       season_var2 <-  cor(data[,col_var2], splines[,col_var2])
       
       # correlations
-      corr_series <- cor(data[,col_var1], data[,col_var2])
-      corr_splines <- cor(splines[,col_var1], splines[,col_var2]) 
-      corr_resid <- cor( (data[,col_var1]-splines[,col_var1]), (data[,col_var2]-splines[,col_var2]) ) 
+      corr_series <-  cor.test(data[,col_var1], data[,col_var2], method = corr_method)$estimate
+      corr_series_p <- cor.test(data[,col_var1], data[,col_var2], method = corr_method)$p.value
+      corr_splines <- cor.test(splines[,col_var1], splines[,col_var2], method = corr_method)$estimate
+      corr_resid <- cor.test((data[,col_var1]-splines[,col_var1]),(data[,col_var2]-splines[,col_var2]),method = corr_method)$estimate 
+      corr_resid_p <- cor.test((data[,col_var1]-splines[,col_var1]),(data[,col_var2]-splines[,col_var2]),method = corr_method)$p.value
       
       # correlations surrogates (null model)
-      corr_surr <- mapply(cor, as.data.frame(surrogates[[(comb_two[1,i])]]), as.data.frame(surrogates[[(comb_two[2,i])]]))
-      # correlates each column of the matrices for each species (500 columns each, null series)
-      # corr_surr is a vector with 500 correlations = column by column correlation of the two matrices
+      corr_surr <- mapply(function(x, y) cor.test(x, y, method = corr_method)$estimate, as.data.frame(surrogates[[(comb_two[1,i])]]), as.data.frame(surrogates[[(comb_two[2,i])]]))
+      # correlates each column of the matrices for each species ('nreps' columns each, null series)
+      # corr_surr is a vector with 'nreps' correlations = column by column correlation of the two matrices
       
       # significance
       probs <- quantile(corr_surr, probs = c(0.025, 0.975)) 
       if(corr_series < probs[1] | corr_series > probs[2]) {
-        p_series <- c("signif")
+        p_surrog <- c("signif")
       }else{
-        p_series <- c("non")
+        p_surrog <- c("non")
       }
       
       # binding all variables pairs in one big data.frame
@@ -59,12 +61,15 @@ surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){
         season_var1 = round(season_var1,5),
         season_var2 = round(season_var2,5),
         corr_series = round(corr_series,5), 
-        p_series = p_series , 
+        corr_series_p = round(corr_series_p,5), 
+        corr_series_p_surrog = p_surrog, 
         corr_splines = round(corr_splines,5),
         # p_splines = NA,
         corr_resid = round(corr_resid,5), 
+        corr_resid_p = round(corr_resid_p,5), 
         # p_resid = NA,
-        round(t(corr_surr),5))) 
+        round(t(corr_surr),5)), 
+        make.row.names = FALSE) 
     }
     
     # corr_pairs[1:50,1:10]
@@ -77,7 +82,7 @@ surrogates_splines <- function(data, splines, trap_name, nreps, overwrite){
     
   }else{
     
-    corr_pairs <- read.csv(paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""), header = TRUE)
+    corr_pairs <- read.csv(paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""), header = TRUE, stringsAsFactors = FALSE)
     return (corr_pairs)
   }
   
