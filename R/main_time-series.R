@@ -80,13 +80,28 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # plot(data_ts[,c(2:11)])
   # plot(data_ts[,c(12:16)])
   
-  # Embedding dimension (simplex function rEDM) # Rafa
-  embed_dim <- embed_dim(data_ts, emb_dim = 20, trap_name, overwrite =T)   
+  # Embedding dimension plot (simplex function rEDM) # Rafa
+  embed_max <- embed_dim(data_ts, emb_dim = 20, trap_name, overwrite =T)   
     
-
+  # Simplex
+  i = 5
+  colnames(data_ts)[i]
   
+  X <- as.data.frame(data_ts)[,i]
   
+  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i,"emax"], stats_only = FALSE)
+  # pred <- simplex(time_series = X, E = embed_max[i,"emax"], stats_only = FALSE)
   
+  fits <- pred$model_output[[1]]
+  head(fits)
+  
+  plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
+       xlab="Time", ylab="X", ylim=range(fits[,2:3],na.rm = T))
+  lines(obs ~ time, data = fits, col=grey.colors(1, alpha=0.25), lwd = 6)
+  legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
+         col=c(grey.colors(1, alpha=0.25), "blue"),bty="n")
+  
+  pred$rho
   
   
   

@@ -9,7 +9,7 @@ embed_dim <- function(data_ts, emb_dim, trap_name, overwrite){
   Emb1<-data.frame()
   sp<-colnames(data_ts)
   
-  for(i in 2:length(colnames(data_ts))){ ##para rodar o simplex em todas espécies##
+  for(i in 2:length(colnames(data_ts))){ # simplex for each variable
     nome<-sp[i]
     lib<-c(1, NROW(data_ts[,i]))
     pred<-lib
@@ -17,7 +17,7 @@ embed_dim <- function(data_ts, emb_dim, trap_name, overwrite){
     emax<-which.max(simplex_output$rho)
     
     Emb1[i,"variable"]<-nome
-    Emb1[i,"max_embed"]<-emax
+    Emb1[i,"emax"]<-emax
     
     savename<-paste("output/",trap_name,"/embedding_plots/",nome, "_E",emb_dim,".png",sep="")
     png(savename, width = 800, height = 600)
