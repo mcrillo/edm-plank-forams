@@ -1,6 +1,6 @@
 # code_planktons.R do Rafa
 
-embed_dim <- function(data_ts, emb_dim, trap_name, overwrite){    
+embed_plot <- function(data_ts, emb_dim, trap_name, overwrite){    
   
  if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/embedding_plots",sep=""))){
     

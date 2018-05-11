@@ -81,33 +81,44 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # plot(data_ts[,c(12:16)])
   
   # Embedding dimension plot (simplex function rEDM) # Rafa
-  embed_max <- embed_dim(data_ts, emb_dim = 20, trap_name, overwrite =T)   
-    
+  embed_max <- embed_plot(data_ts, emb_dim = 20, trap_name, overwrite =F)   
+   
+  
   # Simplex
   rho_df <- data.frame()
+  if (!file.exists(paste("output/",trap_name,"/simplex_pred_plots",sep=""))){ dir.create(paste("output/",trap_name,"/simplex_pred_plots/",sep="")) }
   
   for (i in 2:ncol(data_ts)){
   
-  X <- as.data.frame(data_ts)[,i]
-  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], stats_only = FALSE, silent = T)
-  fits <- pred$model_output[[1]]
-  # head(fits)
+    X <- as.data.frame(data_ts)[,i]
+    pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], tp = 1:20, stats_only = FALSE, silent = T)
+    fits <- pred$model_output[[1]]
+    # head(fits)
   
-  rho_df[i,"variable"] <- colnames(data_ts)[i]
-  rho_df[i,"rho"] <- round(pred$rho,3)
-  rho_df[i,"emax"] <- embed_max[i-1,"emax"]
+    rho_df[i,"variable"] <- colnames(data_ts)[i]
+    rho_df[i,"rho"] <- round(pred$rho[1],3)
+    rho_df[i,"emax"] <- embed_max[i-1,"emax"]
   
-  
-  savename<-paste("output/",trap_name,"/simplex_plots/",colnames(data_ts)[i], "_simplex.png",sep="")
-  png(savename, width = 800, height = 500)
-   plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
-       xlab="Time", ylab=colnames(data_ts)[i], ylim=range(fits[,2:3],na.rm = T))
-    lines(obs ~ time, data = fits, col=grey.colors(1, alpha=0.25), lwd = 6)
-    legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
+    savename1<-paste("output/",trap_name,"/simplex_pred_plots/",colnames(data_ts)[i], "_prediction.png",sep="")
+    png(savename1, width = 800, height = 500)
+     plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
+         xlab="Time", ylab=colnames(data_ts)[i], ylim=range(fits[,2:3],na.rm = T))
+      lines(obs ~ time, data = fits, col=grey.colors(1, alpha=0.25), lwd = 6)
+      legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
          col=c(grey.colors(1, alpha=0.25), "blue"),bty="n")
-  dev.off()
+    dev.off()
+  
+    savename2<-paste("output/",trap_name,"/simplex_pred_plots/decay_",colnames(data_ts)[i], ".png",sep="")
+    png(savename2, width = 800, height = 600)
+     plot(rho ~ tp, data=pred,
+       type = "b",
+       xlab = "Time to prediction",
+       ylab = expression(paste("Forecast skill (",rho,")",sep="")))
+    dev.off()
 
-  }
-  rho_df <- rho_df[-1,]
-  rho_df
+   }
+   rho_df <- rho_df[-1,]
+
+  
+  
   
