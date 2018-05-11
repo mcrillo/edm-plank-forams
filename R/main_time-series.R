@@ -21,19 +21,17 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
 ### Data
 ###
 
- trap_name <- c("GOM")
+ trap_name <- c("GOM") # Gulf od Mexico sediment trap
 
- # Creating output folder for each sediment trap
+ # Creating output folder for this sediment trap
  if (!file.exists(paste("output/",trap_name,sep=""))){ dir.create(paste("output/",trap_name,"/",sep=""))}
 
  
-  # Time-series data ****************************************************************** still define rules of next_open
+  # Time-series data 
   if(trap_name == "GOM"){
-    raw_data <- get_gom_sst(overwrite = F)
-    length(raw_data[,1])
+    raw_data <- get_gom_sst(overwrite = F) # gets temperature data for the GOM time-series
     raw_data<- raw_data[86:nrow(raw_data),] # removing first part of GOM time-series with big gaps (next_open = 123 and 21)
-    length(raw_data[,1])
-  }# else{raw_data <- get_trap_data(overwrite = F)}
+  }# Other sediment traps: else{raw_data <- get_trap_data(overwrite = F)} # still write "get_trap_data" function
  
  
   # First differences time-series
@@ -47,9 +45,9 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # ggpairs(data[,2:ncol(data)])
   
 
-###
-### Analysis
-###
+############################
+### Correlation analysis ###
+############################
 
   # Testing if time-series are stationary (see output/trap_name/stationary_test.csv)
   stationary <- test_stationary(data, trap_name, overwrite = F)
@@ -63,13 +61,32 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   
   # Correlation and Surrogates
   corr_method <- c("kendall")
-  corr_surrog <- surrogates_splines(data, splines, trap_name, nreps=500, corr_method, overwrite = T)   
+  corr_surrog <- corr_surrogates(data, splines, trap_name, nreps=500, corr_method, overwrite = T)   
   # Surrogates: randomization of residuals, summed with splines to generate null series (nreps = 500 null series, columns V1 - V500)
   # corr_surrog[1:50,1:15]
   
   # Plotting box-plots: correlations with surrogate distribution for each focal variable
-  plot_correlation_surrogates(corr_surrog, trap_name, overwrite=T)
+  corr_surrogates_boxplots(corr_surrog, trap_name, overwrite=T)
    
+
+####################
+### EDM analysis ###
+####################
+  library(rEDM)
+  
+  # Gulf of Mexico sediment trap with continuous time-steps and "NA" for intervals without data
+  data_na <- read.csv("data/GOM/GOM_NA_gap.csv", header = T, na = "NA")
+  data_ts <- ts(data_na[,4:19])
+  # plot(data_ts[,c(2:11)])
+  # plot(data_ts[,c(12:16)])
+  
+  # Embedding dimension (simplex function rEDM) # Rafa
+  embed_dim <- embed_dim(data_ts, emb_dim = 20, trap_name, overwrite =T)   
+    
+
+  
+  
+  
   
   
   

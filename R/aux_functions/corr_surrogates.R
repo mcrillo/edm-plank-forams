@@ -1,9 +1,9 @@
 
 
-surrogates_splines <- function(data, splines, trap_name, nreps, corr_method, overwrite){     
+corr_surrogates <- function(data, splines, trap_name, nreps, corr_method, overwrite){     
 
   
-  if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""))){
+  if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/corr_surrogates_",trap_name,".csv",sep=""))){
     
     # (1) # Randomization of residuals of (data - splines)
     # data.frame(data = data[,i], spline = splines[,i], resid = data[,i] - splines[,i])
@@ -37,16 +37,19 @@ surrogates_splines <- function(data, splines, trap_name, nreps, corr_method, ove
       # correlations
       corr_series <-  cor.test(data[,col_var1], data[,col_var2], method = corr_method)$estimate
       corr_series_p <- cor.test(data[,col_var1], data[,col_var2], method = corr_method)$p.value
+      
       corr_splines <- cor.test(splines[,col_var1], splines[,col_var2], method = corr_method)$estimate
+      corr_splines_p <- cor.test(splines[,col_var1], splines[,col_var2], method = corr_method)$p.value
+      
       corr_resid <- cor.test((data[,col_var1]-splines[,col_var1]),(data[,col_var2]-splines[,col_var2]),method = corr_method)$estimate 
       corr_resid_p <- cor.test((data[,col_var1]-splines[,col_var1]),(data[,col_var2]-splines[,col_var2]),method = corr_method)$p.value
       
       # correlations surrogates (null model)
       corr_surr <- mapply(function(x, y) cor.test(x, y, method = corr_method)$estimate, as.data.frame(surrogates[[(comb_two[1,i])]]), as.data.frame(surrogates[[(comb_two[2,i])]]))
-      # correlates each column of the matrices for each species ('nreps' columns each, null series)
-      # corr_surr is a vector with 'nreps' correlations = column by column correlation of the two matrices
+      # correlates column i of the matrices x with column i of matrix y (ncol = nreps = null series)
+      # corr_surr is then a vector with 'nreps' correlations
       
-      # significance
+      # significance of time-series correlation with respect to surrogate null distribution
       probs <- quantile(corr_surr, probs = c(0.025, 0.975)) 
       if(corr_series < probs[1] | corr_series > probs[2]) {
         p_surrog <- c("signif")
@@ -60,15 +63,18 @@ surrogates_splines <- function(data, splines, trap_name, nreps, corr_method, ove
         var2 = names(surrogates)[(comb_two[2,i])],
         season_var1 = round(season_var1,5),
         season_var2 = round(season_var2,5),
+        
         corr_series = round(corr_series,5), 
         corr_series_p = round(corr_series_p,5), 
         corr_series_p_surrog = p_surrog, 
+        
         corr_splines = round(corr_splines,5),
-        # p_splines = NA,
+        corr_splines_p = round(corr_splines_p,5), 
+        
         corr_resid = round(corr_resid,5), 
         corr_resid_p = round(corr_resid_p,5), 
-        # p_resid = NA,
-        round(t(corr_surr),5)), 
+
+        round(t(corr_surr),5)), # add surrogates to data.frame
         make.row.names = FALSE) 
     }
     
@@ -77,12 +83,12 @@ surrogates_splines <- function(data, splines, trap_name, nreps, corr_method, ove
     
     corr_pairs[,1:2] <- data.frame(lapply(corr_pairs[,1:2], as.character), stringsAsFactors=FALSE)
     
-    write.csv(corr_pairs, paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""), row.names = F)
+    write.csv(corr_pairs, paste("output/",trap_name,"/corr_surrogates_",trap_name,".csv",sep=""), row.names = F)
     return(corr_pairs)
     
   }else{
     
-    corr_pairs <- read.csv(paste("output/",trap_name,"/correlation_surrogates_",trap_name,".csv",sep=""), header = TRUE, stringsAsFactors = FALSE)
+    corr_pairs <- read.csv(paste("output/",trap_name,"/corr_surrogates_",trap_name,".csv",sep=""), header = TRUE, stringsAsFactors = FALSE)
     return (corr_pairs)
   }
   

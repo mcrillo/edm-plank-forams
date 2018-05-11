@@ -1,0 +1,16 @@
+"variable","adf_method","adf_stats","adf_lag_order","alternative_hyp","adf_p_value","kpss_method","kpss_level","kpss_trunc_lag","kpss_p_value"
+"sst","Augmented Dickey-Fuller Test",-5.11067251220353,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.184196600608534,2,0.1
+"G_menardii","Augmented Dickey-Fuller Test",-3.52332897447803,5,"stationary",0.0426517662526218,"KPSS Test for Level Stationarity",0.404989477444773,2,0.0750045355841498
+"G_siphonifera","Augmented Dickey-Fuller Test",-4.67435725717085,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.261253635489709,2,0.1
+"O_universa","Augmented Dickey-Fuller Test",-3.85933402926936,5,"stationary",0.0179925714254879,"KPSS Test for Level Stationarity",0.340265997319101,2,0.1
+"G_sacculifer","Augmented Dickey-Fuller Test",-4.07806970838213,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.30948908140279,2,0.1
+"G_ruber_pink","Augmented Dickey-Fuller Test",-4.20388720238765,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.490849459687461,2,0.0437275991694907
+"G_ruber_white","Augmented Dickey-Fuller Test",-4.40647806773439,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.574983316909091,2,0.024910607553719
+"P_obliquiloculata","Augmented Dickey-Fuller Test",-3.37512813695311,5,"stationary",0.0613230882855933,"KPSS Test for Level Stationarity",0.104175979647825,2,0.1
+"N_dutertrei","Augmented Dickey-Fuller Test",-3.52990298868229,5,"stationary",0.0420498972764018,"KPSS Test for Level Stationarity",0.0831810353083146,2,0.1
+"G_calida","Augmented Dickey-Fuller Test",-4.21913692112097,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.106948799115699,2,0.1
+"G_crassaformis","Augmented Dickey-Fuller Test",-4.42769949341925,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.568861265954329,2,0.0261573725328088
+"G_glutinata","Augmented Dickey-Fuller Test",-4.9901087776963,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.122215350416536,2,0.1
+"G_truncatulinoides","Augmented Dickey-Fuller Test",-4.38916348496681,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.131452466639983,2,0.1
+"G_bulloides","Augmented Dickey-Fuller Test",-5.06753096537986,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.44122926341695,2,0.0593839381823491
+"G_falconensis","Augmented Dickey-Fuller Test",-4.67461555287482,5,"stationary",0.01,"KPSS Test for Level Stationarity",0.206300471886428,2,0.1

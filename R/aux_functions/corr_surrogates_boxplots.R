@@ -1,10 +1,10 @@
 
-plot_correlation_surrogates <- function(corr_surrog, trap_name, overwrite){     
+corr_surrogates_boxplots <- function(corr_surrog, trap_name, overwrite){     
 
   
-if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/correlation_surrogates",sep=""))){
+if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/corr_surrogates_boxplots",sep=""))){
     
-  if (!file.exists(paste("output/",trap_name,"/correlation_surrogates",sep=""))){ dir.create(paste("output/",trap_name,"/correlation_surrogates",sep="")) }
+  if (!file.exists(paste("output/",trap_name,"/corr_surrogates_boxplots",sep=""))){ dir.create(paste("output/",trap_name,"/corr_surrogates_boxplots",sep="")) }
   
   for(i in unique(c(corr_surrog$var1,corr_surrog$var2))){ # i = focus variable
       
@@ -33,7 +33,7 @@ if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/correlation_surr
       p <- p + geom_point(data = corr_subset[which(corr_subset$corr_series_p_surrog =="signif"),], aes(x = factor(group), y = 1.05), color = 'red',shape = 8, size = 3)
     }
 
-    pdf(file =  paste("output/",trap_name,"/correlation_surrogates/",i,"_GOM.pdf",sep=""), width=length(corr_subset$group), height=5, paper = "special")
+    pdf(file =  paste("output/",trap_name,"/corr_surrogates_boxplots/",i,"_GOM.pdf",sep=""), width=length(corr_subset$group), height=5, paper = "special")
       print(p)
     dev.off()  
     
