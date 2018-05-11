@@ -84,9 +84,19 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   embed_max <- embed_plots(data_ts, emb_dim = 20, trap_name, overwrite =F)   
   
   # Simplex prediction and prediction decay
-  simplex_plot(data_ts, embed_max, trap_name, overwrite = T)    
-    
+  simplex_plot(data_ts, embed_max, trap_name, overwrite = F)    
   
+  # S-maps: red noise vs. nonlinear deterministic behaviour
+  # forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
+  for (i in 2:ncol(data_ts)){
+  X <- as.data.frame(data_ts)[,i]
+
+  smap_output <- s_map(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], silent = T)
   
-  
-  
+  savename<-paste("output/",trap_name,"/smap_plots/theta_",colnames(data_ts)[i],".png",sep="")
+  png(savename, width = 800, height = 600)
+  par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
+  plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", 
+       ylab = "Forecast Skill (rho)")
+  dev.off()
+  }
