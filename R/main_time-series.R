@@ -84,24 +84,30 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   embed_max <- embed_dim(data_ts, emb_dim = 20, trap_name, overwrite =T)   
     
   # Simplex
-  i = 5
-  colnames(data_ts)[i]
+  rho_df <- data.frame()
+  
+  for (i in 2:ncol(data_ts)){
   
   X <- as.data.frame(data_ts)[,i]
-  
-  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i,"emax"], stats_only = FALSE)
-  # pred <- simplex(time_series = X, E = embed_max[i,"emax"], stats_only = FALSE)
-  
+  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], stats_only = FALSE, silent = T)
   fits <- pred$model_output[[1]]
-  head(fits)
+  # head(fits)
   
-  plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
-       xlab="Time", ylab="X", ylim=range(fits[,2:3],na.rm = T))
-  lines(obs ~ time, data = fits, col=grey.colors(1, alpha=0.25), lwd = 6)
-  legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
+  rho_df[i,"variable"] <- colnames(data_ts)[i]
+  rho_df[i,"rho"] <- round(pred$rho,3)
+  rho_df[i,"emax"] <- embed_max[i-1,"emax"]
+  
+  
+  savename<-paste("output/",trap_name,"/simplex_plots/",colnames(data_ts)[i], "_simplex.png",sep="")
+  png(savename, width = 800, height = 500)
+   plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
+       xlab="Time", ylab=colnames(data_ts)[i], ylim=range(fits[,2:3],na.rm = T))
+    lines(obs ~ time, data = fits, col=grey.colors(1, alpha=0.25), lwd = 6)
+    legend("topright", c("Observed", "Predicted"), lty=1, lwd=c(6,3),
          col=c(grey.colors(1, alpha=0.25), "blue"),bty="n")
-  
-  pred$rho
-  
-  
+  dev.off()
+
+  }
+  rho_df <- rho_df[-1,]
+  rho_df
   
