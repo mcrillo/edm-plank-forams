@@ -87,7 +87,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   simplex_plot(data_ts, embed_max, trap_name, overwrite = F)    
   
   # S-maps: red noise vs. nonlinear deterministic behaviour
-  # forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
+  # If forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
   for (i in 2:ncol(data_ts)){
   X <- as.data.frame(data_ts)[,i]
 
