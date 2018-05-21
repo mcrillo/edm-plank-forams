@@ -1,15 +1,14 @@
 
 
-get_first_diff <- function(data, trap_name, overwrite){ # data.frame, string
+get_first_diff <- function(data, trap_name, days_closed, overwrite){ # data.frame, string
   
   if(overwrite == TRUE | !file.exists(paste("data/",trap_name,"/",trap_name,"_first_diff.csv",sep=""))){
       
       # Differentiating data
-      datafd <- as.data.frame(apply(data[,8:ncol(data)], 2, diff))
+      datafd <- as.data.frame(apply(data[,(which(colnames(data)=="next_open")+1):ncol(data)], 2, diff))
       datafd <- cbind(open=ymd(data[-1,"open"]), datafd)
       
-      # Excluding first difference between samples that had a gap inbetween bigger than 10 days (next_open > 10 days)
-      days_closed = 10 
+      # Excluding first difference between samples that had a gap inbetween bigger than days_closed = 10 days (next_open > 10 days)
       if (any(data$next_open > days_closed)){
         rows <- which(data$next_open > days_closed)
         datafd <- datafd[-rows,] 

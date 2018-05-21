@@ -34,9 +34,6 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   }# Other sediment traps: else{raw_data <- get_trap_data(overwrite = F)} # still write "get_trap_data" function
  
  
-  # First differences time-series
-  datafd <- get_first_diff(raw_data, trap_name, overwrite = F)
-  
   # Data to use
   data <- raw_data[,-c(2:7)] # or <- datafd
   data$open <- ymd(data$open) # transforming to date format (lubridate pkg)
@@ -44,7 +41,34 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # Plot scatterplot of everything
   # ggpairs(data[,2:ncol(data)])
   
+  # First differences time-series
+  datafd <- get_first_diff(raw_data, trap_name, days_closed = 10,overwrite = F)
+  # days_closed : maximum number of days inbetween samples,if that gap between two samples is bigger than 10 days (next_open > 10 days), then the difference between these two samples is not included
 
+  
+#########################
+### Relative abundace ###
+#########################
+  
+  # Relative abundance
+  datarel <- get_relat_abund(raw_data, trap_name, overwrite=F)
+  
+  datarel_cor <- cormatrix(datarel[,-c(1:2)], cormethod = c("kendall"), conf.level = 0.95)
+  datarel_mcor <- datarel_cor$corr
+  colnames(datarel_mcor) <- rownames(datarel_mcor)<- colnames(datarel)[-c(1:2)]
+  corrplot(datarel_mcor)
+  
+  
+  # Plot total abundance through time
+  p <- ggplot(datarel, aes(x=cum_days, y=total_abund)) + geom_line() + geom_point() +
+    labs(y = "Flux (#shells * m-2 * day-1)", x = "Cumulative Days")  
+  pdf(file =  paste("output/",trap_name,"/total_abund_",trap_name,".pdf",sep=""), width=12, height=8, paper = "special")
+    print(p)
+  dev.off()
+  
+  total_ssp_abund <- data.frame(total_ssp_abund = colSums(data[,-c(1,2)]))
+  
+  
 ############################
 ### Correlation analysis ###
 ############################
@@ -57,7 +81,6 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   
   # Splines and species seasonality
   splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots = T, overwrite = F)
-  
   
   # Correlation and Surrogates
   corr_method <- c("kendall")
