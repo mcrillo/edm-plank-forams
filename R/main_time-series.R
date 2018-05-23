@@ -21,7 +21,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
 ### Data
 ###
 
- trap_name <- c("GOM") # Gulf od Mexico sediment trap
+ trap_name <- c("GOM") # Gulf of Mexico sediment trap
 
  # Creating output folder for this sediment trap
  if (!file.exists(paste("output/",trap_name,sep=""))){ dir.create(paste("output/",trap_name,"/",sep=""))}
@@ -58,7 +58,6 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   colnames(datarel_mcor) <- rownames(datarel_mcor)<- colnames(datarel)[-c(1:2)]
   corrplot(datarel_mcor)
   
-  
   # Plot total abundance through time
   p <- ggplot(datarel, aes(x=cum_days, y=total_abund)) + geom_line() + geom_point() +
     labs(y = "Flux (#shells * m-2 * day-1)", x = "Cumulative Days")  
@@ -92,34 +91,45 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   corr_surrogates_boxplots(corr_surrog, trap_name, overwrite=T)
    
 
-####################
-### EDM analysis ###
-####################
-  library(rEDM)
+#####################################
+### EDM analysis: GOM time-series ###
+#####################################
   
-  # Gulf of Mexico sediment trap with continuous time-steps and "NA" for intervals without data
-  data_na <- read.csv("data/GOM/GOM_NA_gap.csv", header = T, na = "NA")
-  data_ts <- ts(data_na[,4:19])
+  library(rEDM)
+  library(zoo)
+  
+###### DATA ######
+
+  # GOM_NAs.csv : Gulf of Mexico sediment trap data with continuous time-steps and "NA" for intervals without data, see "README.txt" in data folder
+  data_na <- read.csv("data/GOM/GOM_NAs.csv", header = T, na = "NA")
+  # changing format to date
+  data_na$open <- dmy(data_na$open)
+  data_na$close <- dmy(data_na$close)
+  # tranfoming columns into numeric, NA_resolution and NA_gap will be transformed into NA (warnings())
+  data_na[, c(5:ncol(data_na))] <- sapply(data_na[, c(5:ncol(data_na))], function(x) as.numeric(as.character(x)))
+  
+  # Calculating the distribution of sums and differences between consecutives samples (less than 'days_closed' apart)
+  distrib_list <- get_distrib_diffs(data_na, trap_name,  days_closed=7 ,overwrite = F)
+  # Filling in the NA_resolutions
+  data_use <- estimate_na_resolution <- function(data_na, distrib_list, overwrite = F)
+    
+    
+###### ANALYSIS ######
+    
+  data_ts <- ts(data_use[,4:19])
   # plot(data_ts[,c(2:11)])
   # plot(data_ts[,c(12:16)])
   
   # Embedding dimension plot (simplex function rEDM) # Rafa
   embed_max <- embed_plots(data_ts, emb_dim = 20, trap_name, overwrite =F)   
+  names(embed_max) <- c("species","emax_auto")
+  # Optimizing embeding dimension by hand:
+  # embed_max <- cbind(embed_max, emax = c())
   
   # Simplex prediction and prediction decay
-  simplex_plot(data_ts, embed_max, trap_name, overwrite = F)    
+  simplex_plot(data_ts, emax = embed_max[,2], trap_name, overwrite = T)    
   
   # S-maps: red noise vs. nonlinear deterministic behaviour
   # If forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
-  for (i in 2:ncol(data_ts)){
-  X <- as.data.frame(data_ts)[,i]
-
-  smap_output <- s_map(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], silent = T)
-  
-  savename<-paste("output/",trap_name,"/smap_plots/theta_",colnames(data_ts)[i],".png",sep="")
-  png(savename, width = 800, height = 600)
-  par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-  plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", 
-       ylab = "Forecast Skill (rho)")
-  dev.off()
-  }
+  smap_plots(data_ts, emax = embed_max[,2], trap_name, overwrite = T)
+    

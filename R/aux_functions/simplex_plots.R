@@ -1,6 +1,11 @@
 
+# data_ts: data.frame as time-series class
+# emax: vector with maximum embedding dimensions to use 
+# trap_name: name of sediment trap
+# overwrite: if TRUE, re-runs the function, if FALSE only runs the function if plots do not exist
 
-simplex_plot <- function(data_ts, embed_max, trap_name, overwrite){    
+
+simplex_plot <- function(data_ts, emax, trap_name, overwrite){    
   
   
   if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/simplex_pred_plots",sep=""))){
@@ -13,13 +18,13 @@ simplex_plot <- function(data_ts, embed_max, trap_name, overwrite){
  for (i in 2:ncol(data_ts)){
   
   X <- as.data.frame(data_ts)[,i]
-  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = embed_max[i-1,"emax"], tp = 1:20, stats_only = FALSE, silent = T)
+  pred <- simplex(X, lib = c(1, NROW(X)), pred = c(1, NROW(X)), E = emax[i-1], tp = 1:20, stats_only = FALSE, silent = T)
   fits <- pred$model_output[[1]]
   # head(fits)
   
   rho_df[i,"variable"] <- colnames(data_ts)[i]
   rho_df[i,"rho"] <- round(pred$rho[1],3)
-  rho_df[i,"emax"] <- embed_max[i-1,"emax"]
+  rho_df[i,"emax"] <- emax[i-1]
   
   savename1<-paste("output/",trap_name,"/simplex_pred_plots/",colnames(data_ts)[i], "_pred.png",sep="")
   png(savename1, width = 800, height = 500)

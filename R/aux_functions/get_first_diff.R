@@ -1,4 +1,6 @@
 
+# days_closed: xcluding first differences and sums of consecutive samples that had a gap inbetween bigger than days_closed = 10 days (next_open > 10 days)
+
 
 get_first_diff <- function(data, trap_name, days_closed, overwrite){ # data.frame, string
   
