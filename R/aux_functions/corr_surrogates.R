@@ -49,13 +49,28 @@ corr_surrogates <- function(data, splines, trap_name, nreps, corr_method, overwr
       # correlates column i of the matrices x with column i of matrix y (ncol = nreps = null series)
       # corr_surr is then a vector with 'nreps' correlations
       
+      
+      
       # significance of time-series correlation with respect to surrogate null distribution
-      probs <- quantile(corr_surr, probs = c(0.025, 0.975)) 
-      if(corr_series < probs[1] | corr_series > probs[2]) {
-        p_surrog <- c("signif")
-      }else{
-        p_surrog <- c("non")
+      # check if corr_surr is totally above or totally below zero
+      prop_above_0 <- sum(corr_surr>0)/nreps
+      if(prop_above_0>0.9 | prop_above_0<0.1){ # positive or negative surrogate correlations distribution
+        if(prop_above_0>0.9){ # 90% positive surrogate correlation distribution
+          p_surrog <- sum(corr_surr >= corr_series)/nreps # how many times the distribution falls above the correlation corr_series
+        }
+        if(prop_above_0<0.1){ # 90% negative surrogate correlation distribution
+          p_surrog <- sum(corr_surr <= corr_series)/nreps # how many times the distribution falls below the correlation corr_series
+        }
+      }else{ #  surrogate correlations distribution in the middle around zero - what to do?!
+        probs <- quantile(corr_surr, probs = c(0.025, 0.975)) 
+        if(corr_series < probs[1] | corr_series > probs[2]) {
+          p_surrog <- 0 # significant
+        }else{
+          p_surrog <- 1 # not significant
+        }
       }
+      
+
       
       # binding all variables pairs in one big data.frame
       corr_pairs <- rbind.data.frame(corr_pairs, cbind.data.frame(
@@ -74,6 +89,9 @@ corr_surrogates <- function(data, splines, trap_name, nreps, corr_method, overwr
         corr_resid = round(corr_resid,5), 
         corr_resid_p = round(corr_resid_p,5), 
 
+        
+        prop_above_0 = prop_above_0,
+          
         round(t(corr_surr),5)), # add surrogates to data.frame
         make.row.names = FALSE) 
     }

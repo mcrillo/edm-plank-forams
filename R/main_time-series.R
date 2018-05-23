@@ -79,7 +79,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   lags_correlation <- cross_correlation(data, trap_name, overwrite = F)
   
   # Splines and species seasonality
-  splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots = T, overwrite = F)
+  splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots = F, overwrite = F)
   
   # Correlation and Surrogates
   corr_method <- c("kendall")
@@ -111,7 +111,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # Calculating the distribution of sums and differences between consecutives samples (less than 'days_closed' apart)
   distrib_list <- get_distrib_diffs(data_na, trap_name,  days_closed=7 ,overwrite = F)
   # Filling in the NA_resolutions
-  data_use <- estimate_na_resolution <- function(data_na, distrib_list, overwrite = F)
+  data_use <- estimate_na_resolution(data_na, distrib_list, overwrite = F)
     
     
 ###### ANALYSIS ######
@@ -121,15 +121,19 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   # plot(data_ts[,c(12:16)])
   
   # Embedding dimension plot (simplex function rEDM) # Rafa
-  embed_max <- embed_plots(data_ts, emb_dim = 20, trap_name, overwrite =F)   
+  embed_max <- embed_plots(data_ts, emb_dim = 20, trap_name, overwrite = F)   
   names(embed_max) <- c("species","emax_auto")
-  # Optimizing embeding dimension by hand:
-  # embed_max <- cbind(embed_max, emax = c())
+  # Optimizing embeding dimension by eye and hand:
+  embed_max <- cbind(embed_max, emax = c(3,3,5,2,2,2,1,2,2,5,3,10,3,5,5))
+  # worse eye-optimization: G_ruber_pink, N_dutertrei, G_truncatulinoides
   
   # Simplex prediction and prediction decay
-  simplex_plot(data_ts, emax = embed_max[,2], trap_name, overwrite = T)    
+  simplex_plot(data_ts, emax = embed_max$emax, trap_name, overwrite = F)    
   
   # S-maps: red noise vs. nonlinear deterministic behaviour
   # If forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
-  smap_plots(data_ts, emax = embed_max[,2], trap_name, overwrite = T)
+  smap_plots(data_ts, emax = embed_max$emax, trap_name, overwrite = F)
+  
+  
+  
     

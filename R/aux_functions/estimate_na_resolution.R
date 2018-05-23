@@ -2,10 +2,7 @@
 
 estimate_na_resolution <- function(data, list, overwrite){
 
-  data <- data_na
-  list <- data_list
-  
-if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_ready.csv")){
+if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_use.csv")){
     
   # time-steps that need to be estimated
   data_na_resolution <- data[duplicated(data$open),]
@@ -15,24 +12,30 @@ if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_ready.csv")){
   data_samples <- data[samples_resolution,]
 
   for (i in 5:(ncol(data_na_resolution)-1)){ # fore each species / column 
-   
+    # print(names(data_na_resolution)[i])
     for (j in 1 :nrow(data_na_resolution)){
-    
+      
       if(data_samples[j,i]!=0){
       # if NA_resolution did not existed, and the two weeks were samples normally, there is what you would have expected as the sum of shell of the two consecutives samples
         total_shells <- 2*data_samples[j,i]
-    
-        rows_to_sample <- which(list$sums[,which(names(list$sums)==names(data_na_resolution)[i])]<=total_shells)
+        # print(total_shells)
+        rows_to_sample <- which(list$sums[,which(names(list$sums)==names(data_na_resolution)[i])]<=total_shells & list$sums[,which(names(list$sums)==names(data_na_resolution)[i])]!=0)
 
         diff_distrib <- list$diffs[rows_to_sample,which(names(list$sums) == names(data_na_resolution)[i])]
       
         # repeat until both samplings are positive values (= shell flux always positive)
-        set.seed(42) #for reproducibility
-        while(TRUE){
-          peteleco <- sample(diff_distrib,1) 
+        if(any(diff_distrib<data_samples[j,i])){
+          set.seed(42) #for reproducibility
+          while(TRUE){
+            peteleco <- sample(diff_distrib,1) 
+            sample1 <- data_samples[j,i]+peteleco
+            sample2 <- data_samples[j,i]-peteleco
+            if(sample1>=0 && sample2>=0 && sample1!=sample2) break()
+          }
+        }else{
+          peteleco <- runif(1, min=0, max=data_samples[j,i])
           sample1 <- data_samples[j,i]+peteleco
           sample2 <- data_samples[j,i]-peteleco
-          if(sample1>=0 && sample2>=0) break()
         }
 
         time_step1 <- data_samples[j,"time_step"]
@@ -55,13 +58,17 @@ if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_ready.csv")){
   
   } # species
   
-  write.csv(data, "data/GOM/GOM_edm_ready.csv", row.names = FALSE)
+  write.csv(data, "data/GOM/GOM_edm_use.csv", row.names = FALSE)
   return (data)
   
 }else{
     
-    data <- read.csv("data/GOM/GOM_edm_ready.csv", header = TRUE)
+    data <- read.csv("data/GOM/GOM_edm_use.csv", header = TRUE)
     return (data)
 }
 
 } # function
+
+
+
+

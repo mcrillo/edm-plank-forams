@@ -23,15 +23,18 @@ if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/corr_surrogates_
     p <- ggplot() + 
          geom_boxplot(data = subset_melt, aes(factor(group), value)) +
          labs(y = "Correlation", x = element_blank()) +
-         theme_bw() + ylim(-1, 1.1) +
+         theme_bw() + ylim(-1.1, 1.1) +
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_series), color = 'red',size = 2) +
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_splines), color = 'blue',shape = 115,size = 2) + # shape: s
          geom_point(data = corr_subset, aes(x = factor(group), y = corr_resid), color = 'blue',shape = 114,size = 2) + # shape: r
          theme(axis.title=element_text(size=18, face="bold"))
 
-    if(any(corr_subset$corr_series_p_surrog=="signif")){
-      p <- p + geom_point(data = corr_subset[which(corr_subset$corr_series_p_surrog =="signif"),], aes(x = factor(group), y = 1.05), color = 'red',shape = 8, size = 3)
+    if(any(corr_subset$corr_series_p_surrog<0.05)){
+      p <- p + geom_point(data = corr_subset[which(corr_subset$corr_series_p_surrog<0.05),], aes(x = factor(group), y = 1.05), color = 'red',shape = 8, size = 3)
     }
+    
+    p <- p + geom_text(data = corr_subset, aes(x = factor(group), y = -1.05, label=corr_subset$prop_above_0), color = 'red', size = 3)
+
 
     pdf(file =  paste("output/",trap_name,"/corr_surrogates_boxplots/",i,"_GOM.pdf",sep=""), width=length(corr_subset$group), height=5, paper = "special")
       print(p)
