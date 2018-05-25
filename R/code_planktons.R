@@ -3,7 +3,6 @@ library(corrplot)
 
 data_plankton<-read.csv("~/Dropbox/plankton_marina/data/GOM_NA_only.csv", na = "NA") #loading the data frames, placing any NA as a NA chr#
 data_plankton_original<-read.csv("~/Dropbox/plankton_marina/data/GOM_original_sst.csv") #loading the original csv from GOM without gaps
-#
 
 data_plankton_ts<-ts(data_plankton[,4:19]) #only taking the interests series, from planktons and setting them as timeseries#
 data_plankton_original_ts<-ts(data_plankton_original[8:22]) #same as above#

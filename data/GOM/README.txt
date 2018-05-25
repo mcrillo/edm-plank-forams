@@ -18,17 +18,16 @@ resolution: number of days in between open and close
 next_open: number of days in between two samplings events (i.e., two rows) = in between the last close and the next open)
 sst: Sea Surface Temperature data - mean sst for the days in between open and close. Data from http://monitor.cicsnc.org/obs4MIPs/data/OISST/Daily/
 
+
 GOM_NAs.csv
 GOM_original_sst.csv spreadsheet, but starting at line 87 of GOM_original_sst.csv (after the big 123-days gap and a smaller 21-days gap). This GOM_NAs.csv file has all time-steps equivalent to 7 days (added column: time-step). 
 Two types of NAs: 
 (1) ‘NA_gap' são os NAs verdadeiros (i.e., período de tempo que não temos amostras). 
 (2) ’NA_resolution' são amostras que foram coletadas num periodo de 14 dias (em vez de 7 dias como a maioria da series). Então, para colocar cada linha da matriz numa mesma resolução de 7 dias (mesmo tamanho de time-steps), eu dividi as amostras de 14 dias em duas de 7, e coloquei NA_resolution em uma delas. Porem, nós temos dados coletados neste NA_resolution: a linha de cima (que foi coletada no mesmo período - mesmo 'open' e 'close'). Então em vez de deixar o NA no NA_resolution, o melhor seria simplesmente copiar a linha de cima. O Brenno disse que talvez isso seja problemático pro CCM, pois teremos algumas linhas na tabelas que serão idênticas. 
 
-GOM_NA_only.csv 
-Adicionada pelo Rafa, com todos os NA_gap e NA_resolution da GOM_NAs.csv como NA.
 
-GOM_NA_gap.csv
-Adicionada pela Marina: GOM_NAs.csv with NA_gap = NA, but NA_resolution preenchidos com a linha de cima (linhas idênticas) 
+GOM_edm_use.csv
+Adicionada pela Marina: GOM_NAs.csv with NA_gap = NA, but NA_resolution preenchidos com estimativa
 
 
 
