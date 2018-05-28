@@ -131,7 +131,7 @@ sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
   simplex_plot(data_ts, emax = embed_max$emax, trap_name, overwrite = F)    
   
   # S-maps: red noise vs. nonlinear deterministic behaviour
-  # If forecast skill increases for θ>0, then the results are suggestive of nonlinear dynamics
+  # If forecast skill increases for theta > 0, then the results are suggestive of nonlinear dynamics
   smap_plots(data_ts, emax = embed_max$emax, trap_name, overwrite = F)
   
   
