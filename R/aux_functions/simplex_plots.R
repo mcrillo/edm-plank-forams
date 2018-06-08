@@ -8,9 +8,9 @@
 simplex_plot <- function(data_ts, emax, trap_name, overwrite){    
   
   
-  if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/simplex_pred_plots",sep=""))){
+  if(overwrite == TRUE | !file.exists(paste("output/",trap_name,"/simplex_plots",sep=""))){
     
-    if (!file.exists(paste("output/",trap_name,"/simplex_pred_plots",sep=""))){ dir.create(paste("output/",trap_name,"/simplex_pred_plots/",sep="")) }
+    if (!file.exists(paste("output/",trap_name,"/simplex_plots",sep=""))){ dir.create(paste("output/",trap_name,"/simplex_plots/",sep="")) }
     
   
  rho_df <- data.frame()
@@ -26,7 +26,7 @@ simplex_plot <- function(data_ts, emax, trap_name, overwrite){
   rho_df[i,"rho"] <- round(pred$rho[1],3)
   rho_df[i,"emax"] <- emax[i-1]
   
-  savename1<-paste("output/",trap_name,"/simplex_pred_plots/",colnames(data_ts)[i], "_pred.png",sep="")
+  savename1<-paste("output/",trap_name,"/simplex_plots/",colnames(data_ts)[i], "_pred.png",sep="")
   png(savename1, width = 800, height = 500)
   plot(pred ~ time, data = fits, type = "l", col = "blue", lwd=3,
        xlab="Time", ylab=colnames(data_ts)[i], ylim=range(fits[,2:3],na.rm = T))
@@ -35,7 +35,7 @@ simplex_plot <- function(data_ts, emax, trap_name, overwrite){
          col=c(grey.colors(1, alpha=0.25), "blue"),bty="n")
   dev.off()
   
-  savename2<-paste("output/",trap_name,"/simplex_pred_plots/decay_",colnames(data_ts)[i], ".png",sep="")
+  savename2<-paste("output/",trap_name,"/simplex_plots/decay_",colnames(data_ts)[i], ".png",sep="")
   png(savename2, width = 800, height = 600)
   plot(rho ~ tp, data=pred,
        type = "b",
