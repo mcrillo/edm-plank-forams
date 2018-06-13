@@ -12,94 +12,13 @@ library(tseries)   # tests series stationary
 library(ggplot2)   # plots
 library(reshape)   # function melt
 library(corrplot)  # matrix correlation plot
+library(rEDM)
+library(zoo)
 
 # Auxiliary functions
 sourceDirectory("./R/aux_functions", modifiedOnly=FALSE)
 
-
-###
-### Data
-###
-
- trap_name <- c("GOM") # Gulf of Mexico sediment trap
-
- # Creating output folder for this sediment trap
- if (!file.exists(paste("output/",trap_name,sep=""))){ dir.create(paste("output/",trap_name,"/",sep=""))}
-
- 
-  # Time-series data 
-  if(trap_name == "GOM"){
-    raw_data <- get_gom_sst(overwrite = F) # gets temperature data for the GOM time-series
-    raw_data<- raw_data[86:nrow(raw_data),] # removing first part of GOM time-series with big gaps (next_open = 123 and 21)
-  }# Other sediment traps: else{raw_data <- get_trap_data(overwrite = F)} # still write "get_trap_data" function
- 
- 
-  # Data to use
-  data <- raw_data[,-c(2:7)] # or <- datafd
-  data$open <- ymd(data$open) # transforming to date format (lubridate pkg)
-
-  # Plot scatterplot of everything
-  # ggpairs(data[,2:ncol(data)])
-  
-  # First differences time-series
-  datafd <- get_first_diff(raw_data, trap_name, days_closed = 10,overwrite = F)
-  # days_closed : maximum number of days inbetween samples,if that gap between two samples is bigger than 10 days (next_open > 10 days), then the difference between these two samples is not included
-
-  
-#########################
-### Relative abundace ###
-#########################
-  
-  # Relative abundance
-  datarel <- get_relat_abund(raw_data, trap_name, overwrite=F)
-  
-  datarel_cor <- cormatrix(datarel[,-c(1:2)], cormethod = c("kendall"), conf.level = 0.95)
-  datarel_mcor <- datarel_cor$corr
-  colnames(datarel_mcor) <- rownames(datarel_mcor)<- colnames(datarel)[-c(1:2)]
-  corrplot(datarel_mcor)
-  
-  # Plot total abundance through time
-  p <- ggplot(datarel, aes(x=cum_days, y=total_abund)) + geom_line() + geom_point() +
-    labs(y = "Flux (#shells * m-2 * day-1)", x = "Cumulative Days")  
-  pdf(file =  paste("output/",trap_name,"/total_abund_",trap_name,".pdf",sep=""), width=12, height=8, paper = "special")
-    print(p)
-  dev.off()
-  
-  total_ssp_abund <- data.frame(total_ssp_abund = colSums(data[,-c(1,2)]))
-  
-  
-############################
-### Correlation analysis ###
-############################
-
-  # Testing if time-series are stationary (see output/trap_name/stationary_test.csv)
-  stationary <- test_stationary(data, trap_name, overwrite = F)
-  
-  # Cross-Correlation (lags)
-  lags_correlation <- cross_correlation(data, trap_name, overwrite = F)
-  
-  # Splines and species seasonality
-  splines <- seasonal_splines(DataSeries = data, DateFormat='%d/%m/%y', SavePlots = F, overwrite = F)
-  
-  # Correlation and Surrogates
-  corr_method <- c("kendall")
-  corr_surrog <- corr_surrogates(data, splines, trap_name, nreps=500, corr_method, overwrite = T)   
-  # Surrogates: randomization of residuals, summed with splines to generate null series (nreps = 500 null series, columns V1 - V500)
-  # corr_surrog[1:50,1:15]
-  
-  # Plotting box-plots: correlations with surrogate distribution for each focal variable
-  corr_surrogates_boxplots(corr_surrog, trap_name, overwrite=T)
-   
-
-#####################################
-### EDM analysis: GOM time-series ###
-#####################################
-  
-  library(rEDM)
-  library(zoo)
-  
-  vignette("rEDM-tutorial", package="rEDM")
-  
+# vignette("rEDM-tutorial", package="rEDM")
   
 ###### DATA ######
 

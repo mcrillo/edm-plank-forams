@@ -8,7 +8,6 @@ test_stationary <- function(data, trap_name, overwrite){
 
     statio <- data.frame()
     
-    # ADF
     for (i in 2:ncol(data)){
       statio[i, "variable"] <- names(data[i])
       
