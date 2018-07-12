@@ -45,15 +45,18 @@ trap_name <- c("GOM")
   # plot(data_ts[,c(12:16)])
   
   # Embedding dimension: output/embedding_plots
-  embed <- embed_dim(data_ts, emb_dim = 10, trap_name, overwrite = T) # uses simplex function rEDM, Rafa code
-  emax <- embed$emax_auto
+  embed <- embed_dim(data_ts, emb_dim = 10, trap_name, overwrite = F) # uses simplex function rEDM, Rafa code
+  emax <- embed$emax_eye
   # Simplex prediction and prediction decay: output/simplex_plots
-  simplex_plot(data_ts, emax, trap_name, overwrite = T)    
+  simplex_plot(data_ts, emax, trap_name, overwrite = F)    
   
   # S-maps (theta): output/smap_plots
   # Red noise vs. nonlinear deterministic behaviour: if forecast skill increases for theta > 0, then the results are suggestive of nonlinear dynamics
   smap_plots(data_ts, emax, trap_name, overwrite = T)
   # 'Linear' thetas (out of 15):  bulloides, calida, glutinata, truncatulinoides, sst
+  
+  
+  
   
   ####################################################################################################
   # Convergent Cross Mapping (CCM)
