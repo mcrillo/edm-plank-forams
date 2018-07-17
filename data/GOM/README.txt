@@ -27,8 +27,11 @@ Two types of NAs:
 
 
 GOM_edm_use.csv
-Adicionada pela Marina: GOM_NAs.csv with NA_gap = NA, but NA_resolution preenchidos com estimativa
+Final file to use for analysis!!!
+Basically GOM_NAs.csv with NA_gap = NA, but NA_resolution filled with estimation (code estimate_na_resolution.R)
 
+GOM_doy.csv 
+Time-series with corresponding Day Of the Year.
 
 
 ———————
