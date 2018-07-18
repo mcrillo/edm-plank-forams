@@ -11,12 +11,12 @@ if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_use.csv")){
   samples_resolution <- as.numeric(as.character(rownames(data_na_resolution)))-1
   data_samples <- data[samples_resolution,]
 
-  for (i in 5:(ncol(data_na_resolution)-1)){ # fore each species / column 
+  for (i in 5:(ncol(data_na_resolution)-1)){ # for each species / column 
     # print(names(data_na_resolution)[i])
     for (j in 1 :nrow(data_na_resolution)){
       
       if(data_samples[j,i]!=0){
-      # if NA_resolution did not existed, and the two weeks were samples normally, there is what you would have expected as the sum of shell of the two consecutives samples
+      # if NA_resolution did not existed, and the two weeks were samples normally, here is what you would have expected as the sum of shell of the two consecutives samples
         total_shells <- 2*data_samples[j,i]
         # print(total_shells)
         rows_to_sample <- which(list$sums[,which(names(list$sums)==names(data_na_resolution)[i])]<=total_shells & list$sums[,which(names(list$sums)==names(data_na_resolution)[i])]!=0)
@@ -41,7 +41,7 @@ if(overwrite == TRUE | !file.exists("data/GOM/GOM_edm_use.csv")){
         time_step1 <- data_samples[j,"time_step"]
         time_step2 <- data_na_resolution[j,"time_step"]
       
-        if(sample1+sample2!=total_shells){"Check code 1"}
+        if(sample1+sample2!=total_shells){"Check code 1"} # MEDIA!
     
         data[which(data$time_step==time_step1),i] <- sample1
         data[which(data$time_step==time_step2),i] <- sample2
