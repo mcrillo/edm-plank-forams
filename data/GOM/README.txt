@@ -26,7 +26,7 @@ Two types of NAs:
 (2) ’NA_resolution' são amostras que foram coletadas num periodo de 14 dias (em vez de 7 dias como a maioria da series). Então, para colocar cada linha da matriz numa mesma resolução de 7 dias (mesmo tamanho de time-steps), eu dividi as amostras de 14 dias em duas de 7, e coloquei NA_resolution em uma delas. Porem, nós temos dados coletados neste NA_resolution: a linha de cima (que foi coletada no mesmo período - mesmo 'open' e 'close'). Então em vez de deixar o NA no NA_resolution, o melhor seria simplesmente copiar a linha de cima. O Brenno disse que talvez isso seja problemático pro CCM, pois teremos algumas linhas na tabelas que serão idênticas. 
 
 
-GOM_edm_use.csv
+GOM_data_use.csv
 Final file to use for analysis!!!
 Basically GOM_NAs.csv with NA_gap = NA, but NA_resolution filled with estimation (code estimate_na_resolution.R)
 
