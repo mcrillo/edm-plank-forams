@@ -5,7 +5,7 @@ get_gom_sst <- function(overwrite){ # data.frame, string
   
   if(overwrite == TRUE | !file.exists("data/GOM/GOM_original_sst.csv")){
     
-      data <- read.csv("data/GOM/GOM_original.csv", header = TRUE)
+      data <- read.csv("data/GOM_original.csv", header = TRUE)
     
      # Number of species in the trap
       col_ssp <- c(3:ncol(data))
